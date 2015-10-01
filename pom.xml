@@ -35,6 +35,16 @@
                 </resources>
             </build>
         </profile>
+        <profile>
+            <id>sssoattacksConfig_HonestClientANDHonestIdP</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/ssoattacksConfigHonestDNS</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
     
     <dependencies>

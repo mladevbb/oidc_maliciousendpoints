@@ -91,61 +91,37 @@
                         </p:outputPanel>    
                     </h:panelGrid>
                 </p:tab>
-                <p:tab title="MaliciousEndpoints: Configuration Files">
-                    <h:panelGrid columns="2" cellpadding="10">
-                        <p:graphicImage value="img/Tools_clipart.png" width="10%"/>
-                        <h:outputText value="About the configuration" />
 
-                        <h:outputText value="Issuer"/>
-                        <p:inputText size="70" value="#{applicationScope.database.configIssuer}" readonly="true" />
-
-                        <h:outputText value="Registration Endpoint" />
-                        <p:inputText size="70" value="#{applicationScope.database.configRegEndpoint}" readonly="true" />
-
-                        <h:outputText value="Token Endpoint" style="color:red" />
-                        <p:inputText size="70" value="#{applicationScope.database.configTokenEndpoint}" readonly="true" />
-
-                        <h:outputText value="Authorization Endpoint" />
-                        <p:inputText size="70" value="#{applicationScope.database.configAuthEndpoint}" readonly="true" />
-
-                        <h:outputText value="UserInfo Endpoint"  style="color:red" />
-                        <p:inputText size="70" value="#{applicationScope.database.configUserInfoEndpoint}" readonly="true" />
-
-                        <h:outputText value="Revocation Endpoint" style="color:red" />
-                        <p:inputText size="70" value="#{applicationScope.database.configRevocationEndpoint}" readonly="true" />
-
-                        <h:outputText value="JWKS Endpoint"/>
-                        <p:inputText size="70" value="#{applicationScope.database.jwksEndpoint}" readonly="true" />
-
-                        <h:outputText value="WebFinger Configuraition" />
-                        <p:inputTextarea rows="2" cols="70" value="#{applicationScope.database.webfingerAsString}" readonly="true" />
-
-                        <h:outputText value="OpenID-Configuration" />
-                        <p:inputTextarea rows="2" cols="70" value="#{applicationScope.database.openidConfigAsString}" readonly="true" />
-                    </h:panelGrid>
-                </p:tab>
                 <p:tab title="Run Demo">
                     <h:panelGrid columns="2" >
                         <p:graphicImage value="img/demo.png" width="70px"/>
                         <p>The running demo shows how the attack works. But first, some details about the test environment and participants.</p>
-
                         <h:outputText value="" />
                         <p:outputPanel deferred="true">
-                            <fieldset><legend>Test Environment</legend>    
+                            <fieldset><legend>Test Environment</legend>
                                 <table border="0" cellspacing="15px">
                                     <tr>
+                                        <td><b>Actor</b></td>
+                                        <td><b>Demo URL</b></td>
+                                        <td><b>URL according Fig. 1</b></td>
+                                        <td><b>Notes</b></td>
+                                    </tr>
+                                    <tr>
                                         <td><b>Honest OpenID Provider</b></td>
-                                        <td>http://beta.cloud.nds.rub.de/openid-connect-server-webapp/</td>
+                                        <td>http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/</td>
+                                        <td>https://honestOP.com/</td>
                                         <td>User Credentials: admin/password<br/>Use this URL on the Client to start the normal authentication.</td>
                                     </tr>
                                     <tr>
                                         <td><b>Honest Client</b></td>
-                                        <td>http://eta.cloud.nds.rub.de:8080/simple-web-app/login</td>
+                                        <td>http://honestclient.cloud.nds.rub.de:8080/simple-web-app/login</td>
+                                        <td>https://honestClient.com</td>
                                         <td>Enter user's identity or URL of the OpenID Provider</td>
                                     </tr>
                                     <tr>
                                         <td><b>Malicious Discovery Service</b></td>
                                         <td>http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</td>
+                                        <td>http://malicious.com</td>
                                         <td>Use this URL to start the attack.</td>
                                     </tr>
                                 </table> 
@@ -153,14 +129,19 @@
                             <p:accordionPanel>
                                 <p:tab title="Normal Protocol Flow">
                                     <p:outputPanel deferred="true">
-                                        <p><b>How to start the Demo:</b></p>
+                                        <p>You can start the normal OpenID Connect authentication. In this manner, you can see how the normal flow looks like and what a normal user usually see.<br/><b>How to start the Demo:</b></p>
                                         <ul>
-                                            <li>Option 1: Vist the website:<a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (http://beta.cloud.nds.rub.de/openid-connect-server-webapp/)</li>
-                                            <li>Option 2: By clicking on this link: <a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://beta.cloud.nds.rub.de/openid-connect-server-webapp/" target="_blank">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://beta.cloud.nds.rub.de/openid-connect-server-webapp/</a>
+                                            <li>Option 1: By clicking on this link: <a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/" target="_blank">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=<font color="green">http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/</font>
+                                                </a>
+
                                             </li>
+                                            <li>
+                                                Option 2: Vist the website:<a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (<font color="green">http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/</font>)
+                                            </li>
+                                            <li>Login credentials:admin/password</li>
                                         </ul>
 
-                                        <p><b>Behind the scene:</b></p>
+                                        <p><b>Protocol flow description</b></p>
                                         <ul>
                                             <li>Step 1: By entering the URL of the OpenID Provider on the Client, the Client starts the Discovery Phase.</li>
                                             <li>Step 2: The Client discovers the according OpenID Provider and caches the metadata. The metadata contains informations about the endpoints of the OpenID Provider, supported flows, cryptographic algorithms etc.</li>
@@ -176,11 +157,13 @@
 
                                 <p:tab title="The Attack">
                                     <p:outputPanel deferred="true">
-                                        <p><b>How to start the attack:</b></p>
+                                        <p>Here, you can start the MalciousEndpoint attack on OpenID Connect by acting as victim clicking on a malicious link. During the attack, you can make comparison to the <i>Normal flow</i> and estimate the differences.<br/>
+                                            <b>How to start the Attack: </b></p>
                                         <ul>
-                                            <li>Option 1: Vist the website:<a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (http://ssoattacks.org/OIDC_MaliciousDiscoveryService/)</li>
-                                            <li>Option 2: By clicking on this link: <a href="http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://ssoattacks.org/OIDC_MaliciousDiscoveryService/" target="_blank">http://eta.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</a>
+                                            <li>Option 1: By clicking on this link: <a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://ssoattacks.org/OIDC_MaliciousDiscoveryService/" target="_blank">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=<font color="red">http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</font></a></li>
+                                            <li>Option 2: Vist the website:<a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (<font color="red">http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</font>)
                                             </li>
+                                            <li>Login credentials: admin/password</li>
                                         </ul>
 
                                         <p><b>Behind the scene:</b></p>
@@ -194,10 +177,7 @@
                                             <li>Step 7: The Client redeems the received <i>code</i> by sending it to the Malicious Endpoint Service together with his credentials (<i>client_id/client_secret</i>). </li>
                                             <li>Step 8: Now, the attacker have a valid <i>code</i> and the Client's credentials. He can use this information to get the ID Token and Access Token.</li>
                                         </ul>
-                                    </p:outputPanel>
-                                </p:tab>
-                                <p:tab title="Result">
-                                    <p:outputPanel deferred="true">
+
                                         <p:poll interval="3" update="lastCredentials" />
                                         <p:panelGrid id="lastCredentials" columns="2" columnClasses="label,value" style="width:80%">
                                             <h:outputText value="DateTime" />
@@ -232,13 +212,47 @@
                         </p:outputPanel>
                     </h:panelGrid>
                 </p:tab>
-                <p:tab title="MaliciousEndpoints: Collected Credentials">
+                <p:tab title="MaliciousEndpoints: Configuration Files">
+                    <h:panelGrid columns="2" cellpadding="10">
+                        <p:graphicImage value="img/Tools_clipart.png" width="10%"/>
+                        <h:outputText value="About the configuration" />
+
+                        <h:outputText value="Issuer"/>
+                        <p:inputText size="70" value="#{applicationScope.database.configIssuer}" readonly="true" />
+
+                        <h:outputText value="Registration Endpoint" />
+                        <p:inputText size="70" value="#{applicationScope.database.configRegEndpoint}" readonly="true" />
+
+                        <h:outputText value="Token Endpoint" style="color:red" />
+                        <p:inputText size="70" value="#{applicationScope.database.configTokenEndpoint}" readonly="true" />
+
+                        <h:outputText value="Authorization Endpoint" />
+                        <p:inputText size="70" value="#{applicationScope.database.configAuthEndpoint}" readonly="true" />
+
+                        <h:outputText value="UserInfo Endpoint"  style="color:red" />
+                        <p:inputText size="70" value="#{applicationScope.database.configUserInfoEndpoint}" readonly="true" />
+
+                        <h:outputText value="Revocation Endpoint" style="color:red" />
+                        <p:inputText size="70" value="#{applicationScope.database.configRevocationEndpoint}" readonly="true" />
+
+                        <h:outputText value="JWKS Endpoint"/>
+                        <p:inputText size="70" value="#{applicationScope.database.jwksEndpoint}" readonly="true" />
+
+                        <h:outputText value="WebFinger Configuraition" />
+                        <p:inputTextarea rows="2" cols="70" value="#{applicationScope.database.webfingerAsString}" readonly="true" />
+
+                        <h:outputText value="OpenID-Configuration" />
+                        <p:inputTextarea rows="2" cols="70" value="#{applicationScope.database.openidConfigAsString}" readonly="true" />
+                    </h:panelGrid>
+                </p:tab>
+                <p:tab title="MaliciousEndpoints: Collected Credentials within the Demo">
+                    <p><b>We store information of previous runs of our demo. Click on the "Play"-button of an entry in order to see more details.</b></p>
                     <h:panelGrid columns="2" cellpadding="10">
                         <p:graphicImage />
                         <p:poll interval="30" update="collectedTokens" />
                         <p:dataTable var="data" id="collectedTokens" value="#{applicationScope.database.interceptedTokens}" paginator="true" rows="15" rowsPerPageTemplate="5,10,15" style="fixed-size">
                             <f:facet name="header">
-                                Collected Credentials! Expand rows to see detailed information.
+                                Collected Credentials! Expand rows to see details information.
                             </f:facet>
                             <p:column style="width:16px">
                                 <p:rowToggler />
