@@ -108,13 +108,13 @@
                                     </tr>
                                     <tr>
                                         <td><b>Honest OpenID Provider</b></td>
-                                        <td>http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/</td>
+                                        <td>http://honestidp.de/openid-connect-server-webapp/</td>
                                         <td>https://honestOP.com/</td>
                                         <td>User Credentials: admin/password<br/>Use this URL on the Client to start the normal authentication.</td>
                                     </tr>
                                     <tr>
                                         <td><b>Honest Client</b></td>
-                                        <td>http://honestclient.cloud.nds.rub.de:8080/simple-web-app/login</td>
+                                        <td>http://honestsp.de:8080/simple-web-app/login</td>
                                         <td>https://honestClient.com</td>
                                         <td>Enter user's identity or URL of the OpenID Provider</td>
                                     </tr>
@@ -131,12 +131,12 @@
                                     <p:outputPanel deferred="true">
                                         <p>You can start the normal OpenID Connect authentication. In this manner, you can see how the normal flow looks like and what a normal user usually see.<br/><b>How to start the Demo:</b></p>
                                         <ul>
-                                            <li>Option 1: By clicking on this link: <a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/" target="_blank">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=<font color="green">http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/</font>
+                                            <li>Option 1: By clicking on this link: <a href="http://honestsp.de:8080/simple-web-app/openid_connect_login?identifier=http://honestidp.de/openid-connect-server-webapp/" target="_blank">http://honestsp.de:8080/simple-web-app/openid_connect_login?identifier=<font color="green">http://honestidp.de/openid-connect-server-webapp/</font>
                                                 </a>
 
                                             </li>
                                             <li>
-                                                Option 2: Vist the website:<a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (<font color="green">http://honestidp.cloud.nds.rub.de/openid-connect-server-webapp/</font>)
+                                                Option 2: Vist the website:<a href="http://honestsp.de:8080/simple-web-app/openid_connect_login">http://honestsp.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (<font color="green">http://honestidp.de/openid-connect-server-webapp/</font>)
                                             </li>
                                             <li>Login credentials:admin/password</li>
                                         </ul>
@@ -160,8 +160,8 @@
                                         <p>Here, you can start the MalciousEndpoint attack on OpenID Connect by acting as victim clicking on a malicious link. During the attack, you can make comparison to the <i>Normal flow</i> and estimate the differences.<br/>
                                             <b>How to start the Attack: </b></p>
                                         <ul>
-                                            <li>Option 1: By clicking on this link: <a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=http://ssoattacks.org/OIDC_MaliciousDiscoveryService/" target="_blank">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login?identifier=<font color="red">http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</font></a></li>
-                                            <li>Option 2: Vist the website:<a href="http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login">http://honestclient.cloud.nds.rub.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (<font color="red">http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</font>)
+                                            <li>Option 1: By clicking on this link: <a href="http://honestsp.de:8080/simple-web-app/openid_connect_login?identifier=http://ssoattacks.org/OIDC_MaliciousDiscoveryService/" target="_blank">http://honestsp.de:8080/simple-web-app/openid_connect_login?identifier=<font color="red">http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</font></a></li>
+                                            <li>Option 2: Vist the website:<a href="http://honestsp.de:8080/simple-web-app/openid_connect_login">http://honestsp.de:8080/simple-web-app/openid_connect_login</a>  AND entering the URL of the honest OpenID Provider (<font color="red">http://ssoattacks.org/OIDC_MaliciousDiscoveryService/</font>)
                                             </li>
                                             <li>Login credentials: admin/password</li>
                                         </ul>

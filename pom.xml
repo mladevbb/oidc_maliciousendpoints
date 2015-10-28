@@ -45,6 +45,16 @@
                 </resources>
             </build>
         </profile>
+        <profile>
+            <id>sssoattacksConfig_HonestSPIdPDE</id>
+            <build>
+                <resources>
+                    <resource>
+                        <directory>src/main/resources/ssoattacksConfigHonestSPIdPDE</directory>
+                    </resource>
+                </resources>
+            </build>
+        </profile>
     </profiles>
     
     <dependencies>
